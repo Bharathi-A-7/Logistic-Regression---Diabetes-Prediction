@@ -1,10 +1,12 @@
 
+
 # Range defaults to starting from 0 and doesnt include the last value 
 
 
 from math import exp
 from csv import reader
 from random import randrange
+import matplotlib.pyplot as plt
 
 def load_file(file):
     data = list()
@@ -63,9 +65,11 @@ def accuracy_calc(original,predicted):
 
 
 #Testing the logistic regression algorithm
+#The data is split into many groups. One group is chosen for testing
+#The remaining groups are used for training
 def eval_algorithm(data,logistic,n_folds,*args):
-    folds = split_into_folds(data,n_folds)
-    accuracies = list()
+    folds = split_into_folds(data,n_folds)        
+    accuracies = list()                            
     for fold in folds :
         train_data = list(folds)
         train_data.remove(fold)
@@ -79,6 +83,7 @@ def eval_algorithm(data,logistic,n_folds,*args):
         original = [row[-1] for row in fold]
         accuracy = accuracy_calc(original,predicted)
         accuracies.append(accuracy)
+
     return accuracies
 
 
@@ -102,15 +107,27 @@ def learn_coefficients(train_data,alpha,n_loop):
                 
     return coefficients
 
+
+
 def logistic_regression(train_data,test_data,alpha,n_loop):
     prediction = list()
+    pred_plot = list()
     coefficients = learn_coefficients(train_data,alpha,n_loop)
     for row in test_data:
         y_pred = predict(row,coefficients)
+        pred_plot.append(y_pred)
         y_pred = round(y_pred)
         print("Predicted :",y_pred)
         prediction.append(y_pred)
+   # pred_plot = int(pred_plot)
+    pred_plot.sort()
+    for i in range(len(pred_plot)):
+        plt.scatter(i,pred_plot[i])
+    plt.show()
+         
     return prediction 
+
+
 
 
 # Loading the data     
@@ -132,5 +149,8 @@ print(accuracies)
 
 print(" Prediction = 0 : No Diabetes")
 print(" Prediction = 1 : Diabetes")
+print(" From the graph , we can conclude that the predicted values stay between 0 and 1")
+
+    
 
     
